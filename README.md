@@ -43,12 +43,6 @@ aws eks wait nodegroup-active --cluster-name $CLUSTER_NAME --nodegroup-name $NOD
 ### modified the subnets by enabling the auto assign public ip for the below subnets
 <img width="1858" height="955" alt="image" src="https://github.com/user-attachments/assets/d4a7a64e-3f03-4bc7-96ee-d45900fead06" />
 
-```
-                    "message": "One or more Amazon EC2 Subnets of [subnet-0e99880d9a05bdf17, subnet-048abb54f2205da64] for node group spot-node-group-eks does not automatically assign public IP addresses to instances launched into it. If you want your instances to be assigned a public IP address, then you need to enable auto-assign public IP address for the subnet. See IP addressing in VPC guide: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-ip-addressing.html#subnet-public-ip",
-                    "resourceIds": [
-                        "subnet-0e99880d9a05bdf17",
-                        "subnet-048abb54f2205da64"
-```
 
 ### Apply
 

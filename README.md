@@ -40,7 +40,7 @@ aws eks create-nodegroup \
 echo ":hourglass: Waiting for node group '$NODEGROUP_NAME' to become ACTIVE..."
 aws eks wait nodegroup-active --cluster-name $CLUSTER_NAME --nodegroup-name $NODEGROUP_NAME --region $REGION
 ```
-### modified the subnets by enabling the auto assign public ip
+### modified the subnets by enabling the auto assign public ip for the below subnets
 <img width="1858" height="955" alt="image" src="https://github.com/user-attachments/assets/d4a7a64e-3f03-4bc7-96ee-d45900fead06" />
 
 ```

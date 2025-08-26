@@ -56,6 +56,7 @@ aws eks wait nodegroup-active --cluster-name $CLUSTER_NAME --nodegroup-name $NOD
 ./create-spot-nodegroup.sh
 ```
 
+<img width="1855" height="940" alt="image" src="https://github.com/user-attachments/assets/b2740d25-67d0-4c47-9f8c-7df2f1e168ac" />
 
-cho ":white_check_mark: Spot node group '$NODEGROUP_NAME' is now ACTIVE in EKS cluster '$CLUSTER_NAME'."
-`
+<img width="1851" height="934" alt="image" src="https://github.com/user-attachments/assets/4eded2ca-2c0e-41a4-b6b1-68043473197b" />
+

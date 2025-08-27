@@ -67,7 +67,7 @@ echo ":white_check_mark: Spot node group '$NODEGROUP_NAME' created successfully!
 
 <img width="1858" height="1011" alt="image" src="https://github.com/user-attachments/assets/234eef76-114a-4c58-bd3a-553f025fc418" />
 
-<img width="1851" height="934" alt="image" src="https://github.com/user-attachments/assets/4eded2ca-2c0e-41a4-b6b1-68043473197b" />
+<img width="1840" height="874" alt="image" src="https://github.com/user-attachments/assets/649a5054-122d-4c63-bbb6-924a60f1bfdb" />
 
 
 

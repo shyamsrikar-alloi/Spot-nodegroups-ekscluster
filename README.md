@@ -65,7 +65,7 @@ echo ":white_check_mark: Spot node group '$NODEGROUP_NAME' created successfully!
 ./create-spot-nodegroup.sh
 ```
 
-<img width="1855" height="940" alt="image" src="https://github.com/user-attachments/assets/b2740d25-67d0-4c47-9f8c-7df2f1e168ac" />
+<img width="1858" height="1011" alt="image" src="https://github.com/user-attachments/assets/234eef76-114a-4c58-bd3a-553f025fc418" />
 
 <img width="1851" height="934" alt="image" src="https://github.com/user-attachments/assets/4eded2ca-2c0e-41a4-b6b1-68043473197b" />
 

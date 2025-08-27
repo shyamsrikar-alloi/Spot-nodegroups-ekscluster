@@ -17,9 +17,9 @@ MAX_SIZE=8
 DESIRED_SIZE=4
 DISK_SIZE=20
 
-# Optional labels and taints
+# Optional labels and taints (correct JSON format for EKS)
 LABELS="spot=true,workload=non-critical"
-TAINTS="spot=true:NoSchedule"
+TAINTS='[{"key":"spot","value":"true","effect":"NO_SCHEDULE"}]'
 
 echo ":satellite_antenna: Fetching subnet IDs for cluster '$CLUSTER_NAME'..."
 SUBNET_IDS=$(aws eks describe-cluster --name $CLUSTER_NAME --region $REGION \
@@ -44,7 +44,7 @@ aws eks create-nodegroup \
     --node-role $NODE_ROLE_ARN \
     --capacity-type SPOT \
     --labels $LABELS \
-    --taints $TAINTS \
+    --taints "$TAINTS" \
     --tags k8s.io/cluster-autoscaler/enabled=true,k8s.io/cluster-autoscaler/$CLUSTER_NAME=true \
     --region $REGION
 
@@ -52,6 +52,7 @@ echo ":hourglass: Waiting for node group '$NODEGROUP_NAME' to become ACTIVE..."
 aws eks wait nodegroup-active --cluster-name $CLUSTER_NAME --nodegroup-name $NODEGROUP_NAME --region $REGION
 
 echo ":white_check_mark: Spot node group '$NODEGROUP_NAME' created successfully!"
+
 ```
 #2-dummy
 ```

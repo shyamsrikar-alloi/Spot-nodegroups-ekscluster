@@ -202,6 +202,7 @@ eksctl create iamserviceaccount \
   --attach-policy-arn arn:aws:iam::533267292058:policy/NodeTerminationHandlerQueuePolicy \
   --approve
 ```
+<img width="1790" height="440" alt="image" src="https://github.com/user-attachments/assets/008fc03f-08a8-4f33-b406-b2f9f702e874" />
 
 # Step 4: Helm install NTH as a Deployment
 - Now we install NTH as a Deployment, targeting stable nodes (not the Spot nodes themselves).
@@ -218,3 +219,4 @@ helm upgrade --install node-termination-handler eks/aws-node-termination-handler
   --set serviceAccount.name=aws-node-termination-handler \
   --set serviceAccount.create=false
 ```
+<img width="1859" height="504" alt="image" src="https://github.com/user-attachments/assets/ec7cba08-b3c2-4bdd-9d7e-a0253e83e04c" />

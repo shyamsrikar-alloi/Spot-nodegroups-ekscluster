@@ -113,3 +113,81 @@ aws eks create-nodegroup \
 echo ":hourglass: Waiting for node group '$NODEGROUP_NAME' to become ACTIVE..."
 aws eks wait nodegroup-active --cluster-name $CLUSTER_NAME --nodegroup-name $NODEGROUP_NAME --region $REGION
 ```
+
+
+
+# Step 1: Create an SQS queue
+Queue-Processor mode relies on AWS SQS for receiving Spot termination/rebalance events.
+```
+# Create the queue
+aws sqs create-queue --queue-name node-termination-handler-queue
+
+# Get the queue URL
+QUEUE_URL=$(aws sqs get-queue-url \
+  --queue-name node-termination-handler-queue \
+  --query 'QueueUrl' \
+  --output text)
+
+echo $QUEUE_URL
+```
+# Step 2: Set up EventBridge rules
+AWS publishes Spot interruption and rebalance events. We need to forward them to the SQS queue.
+```
+# Spot Interruption events
+aws events put-rule --name spot-interruption \
+  --event-pattern '{"source":["aws.ec2"],"detail-type":["EC2 Spot Instance Interruption Warning"]}'
+
+aws events put-targets --rule spot-interruption \
+  --targets "Id"="1","Arn"="$(aws sqs get-queue-attributes \
+      --queue-url $QUEUE_URL \
+      --attribute-name QueueArn \
+      --query 'Attributes.QueueArn' \
+      --output text)"
+```
+
+(Optional) Repeat for rebalance recommendations:
+```
+aws events put-rule --name spot-rebalance \
+  --event-pattern '{"source":["aws.ec2"],"detail-type":["EC2 Spot Instance Rebalance Recommendation"]}'
+
+aws events put-targets --rule spot-rebalance \
+  --targets "Id"="1","Arn"="$(aws sqs get-queue-attributes \
+      --queue-url $QUEUE_URL \
+      --attribute-name QueueArn \
+      --query 'Attributes.QueueArn' \
+      --output text)"
+```
+# Step 3: Create IAM role and ServiceAccount
+- NTH needs AWS permissions to:
+- Read SQS queue messages
+- Drain EC2 nodes / modify ASG
+
+### policy name: NodeTerminationHandlerQueuePolicy
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "sqs:ReceiveMessage",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes"
+      ],
+      "Resource": "arn:aws:sqs:us-west-2:533267292058:node-termination-handler-queue"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "autoscaling:DescribeAutoScalingGroups",
+        "autoscaling:UpdateAutoScalingGroup",
+        "autoscaling:DescribeAutoScalingInstances",
+        "ec2:DescribeInstances",
+        "ec2:DescribeTags",
+        "ec2:TerminateInstances"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```

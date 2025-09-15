@@ -335,11 +335,20 @@ spec:
     - key: karpenter.sh/capacity-type
       operator: In
       values: ["spot"]
+    - key: spot
+      operator: In
+      values: ["true"]
+    - key: workload
+      operator: In
+      values: ["non-critical"]
   taints:
     - key: spot
       value: "true"
       effect: NoSchedule
   ttlSecondsAfterEmpty: 300
+
+
+
 ```
 ```
 kubectl apply -f provisioner.yaml

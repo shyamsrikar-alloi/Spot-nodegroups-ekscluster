@@ -285,3 +285,33 @@ helm upgrade --install karpenter karpenter/karpenter \
 ```
 
 <img width="1753" height="308" alt="image" src="https://github.com/user-attachments/assets/162e0457-7519-4dd4-9d22-69e124a8e2c5" />
+
+```
+nano provisioner.yaml
+```
+```
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: spot-provisioner
+spec:
+  # Limit to Spot instances
+  requirements:
+    - key: "kubernetes.io/arch"
+      operator: In
+      values: ["amd64"]
+    - key: "kubernetes.io/instance-type"
+      operator: In
+      values: ["t3.medium"]
+    - key: "karpenter.sh/capacity-type"
+      operator: In
+      values: ["spot"]
+  # Where to launch instances (optional)
+  provider:
+    subnetIDs:
+      - subnet-0e99880d9a05bdf17
+      - subnet-048abb54f2205da64
+    securityGroupIDs:
+      - sg-01536e3df2189d6e3
+  ttlSecondsAfterEmpty: 300   # Terminate unused nodes after 30 seconds
+```

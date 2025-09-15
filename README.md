@@ -289,7 +289,7 @@ helm upgrade --install karpenter karpenter/karpenter \
 ```
 nano provisioner.yaml
 ```
-- tag te subnets and provisioners
+- tag the subnets and security groups
 
 <img width="1851" height="441" alt="image" src="https://github.com/user-attachments/assets/d620ad1e-39c6-4b92-802e-5c772f02742b" />
 

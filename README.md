@@ -191,3 +191,14 @@ aws events put-targets --rule spot-rebalance \
   ]
 }
 ```
+# creating service account
+```
+eksctl create iamserviceaccount \
+  --cluster opshealth-dev-eks \
+  --namespace node-termination-handler \
+  --name aws-node-termination-handler \
+  --attach-policy-arn arn:aws:iam::aws:policy/AmazonSQSFullAccess \
+  --attach-policy-arn arn:aws:iam::aws:policy/AutoScalingFullAccess \
+  --attach-policy-arn arn:aws:iam::533267292058:policy/NodeTerminationHandlerQueuePolicy \
+  --approve
+```

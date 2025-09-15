@@ -264,3 +264,24 @@ eksctl create iamserviceaccount \
   --approve
 ```
 <img width="1857" height="498" alt="image" src="https://github.com/user-attachments/assets/c3bff3ac-101d-408f-9ef8-2650ec412867" />
+
+## created a role and instance profile and attached to karpenter while installing
+<img width="1551" height="709" alt="image" src="https://github.com/user-attachments/assets/ed58d70a-dda5-4d39-82a8-c071974a2b40" />
+
+```
+helm repo add karpenter https://charts.karpenter.sh
+```
+```
+helm repo update
+```
+```
+helm upgrade --install karpenter karpenter/karpenter \
+  --namespace node-termination-handler \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=karpenter \
+  --set clusterName=opshealth-dev-eks \
+  --set clusterEndpoint=$(aws eks describe-cluster --name opshealth-dev-eks --query "cluster.endpoint" --output text) \
+  --set aws.defaultInstanceProfile=KarpenterNodeInstanceProfile-opshealth-dev-eks  
+```
+
+<img width="1753" height="308" alt="image" src="https://github.com/user-attachments/assets/162e0457-7519-4dd4-9d22-69e124a8e2c5" />

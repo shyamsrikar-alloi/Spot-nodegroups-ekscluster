@@ -290,10 +290,11 @@ helm upgrade --install karpenter karpenter/karpenter \
 - tag the subnets and security groups
 
 <img width="1851" height="441" alt="image" src="https://github.com/user-attachments/assets/d620ad1e-39c6-4b92-802e-5c772f02742b" />
+
 ```
  nano aws-node-template.yaml
 ```
--
+
 ```
 apiVersion: karpenter.k8s.aws/v1alpha1
 kind: AWSNodeTemplate
@@ -305,7 +306,7 @@ spec:
   securityGroupSelector:
     karpenter.sh/discovery: opshealth-dev-eks
 ```
--
+
 ```
 kubectl apply -f aws-node-template.yaml
 ```

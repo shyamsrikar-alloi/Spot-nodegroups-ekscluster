@@ -293,6 +293,7 @@ helm upgrade --install karpenter karpenter/karpenter \
 ```
  nano aws-node-template.yaml
 ```
+-
 ```
 apiVersion: karpenter.k8s.aws/v1alpha1
 kind: AWSNodeTemplate
@@ -304,6 +305,7 @@ spec:
   securityGroupSelector:
     karpenter.sh/discovery: opshealth-dev-eks
 ```
+-
 ```
 kubectl apply -f aws-node-template.yaml
 ```

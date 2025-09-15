@@ -286,40 +286,61 @@ helm upgrade --install karpenter karpenter/karpenter \
 
 <img width="1753" height="308" alt="image" src="https://github.com/user-attachments/assets/162e0457-7519-4dd4-9d22-69e124a8e2c5" />
 
-```
-nano provisioner.yaml
-```
+
 - tag the subnets and security groups
 
 <img width="1851" height="441" alt="image" src="https://github.com/user-attachments/assets/d620ad1e-39c6-4b92-802e-5c772f02742b" />
+```
+ nano aws-node-template.yaml
+```
+```
+apiVersion: karpenter.k8s.aws/v1alpha1
+kind: AWSNodeTemplate
+metadata:
+  name: spot-template
+spec:
+  subnetSelector:
+    karpenter.sh/discovery: opshealth-dev-eks
+  securityGroupSelector:
+    karpenter.sh/discovery: opshealth-dev-eks
+```
+```
+kubectl apply -f aws-node-template.yaml
+```
 
+```
+nano provisioner.yaml
+```
 ```
 apiVersion: karpenter.sh/v1alpha5
 kind: Provisioner
 metadata:
   name: spot-provisioner
 spec:
+  providerRef:
+    name: spot-template          # must match AWSNodeTemplate name
   requirements:
-    - key: "kubernetes.io/arch"
+    - key: kubernetes.io/arch
       operator: In
       values: ["amd64"]
-    - key: "karpenter.k8s.aws/instance-family"
+    - key: karpenter.k8s.aws/instance-family
       operator: In
       values: ["t3"]
-    - key: "karpenter.k8s.aws/instance-size"
+    - key: karpenter.k8s.aws/instance-size
       operator: In
       values: ["medium"]
-    - key: "karpenter.sh/capacity-type"
+    - key: karpenter.sh/capacity-type
       operator: In
       values: ["spot"]
-  provider:
-    subnetSelector:
-      karpenter.sh/discovery: "opshealth-dev-eks"
-    securityGroupSelector:
-      karpenter.sh/discovery: "opshealth-dev-eks"
-  ttlSecondsAfterEmpty: 300  # terminate unused nodes after 2 minutes
+  taints:
+    - key: spot
+      value: "true"
+      effect: NoSchedule
+  ttlSecondsAfterEmpty: 300
 ```
-
+```
+kubectl apply -f provisioner.yaml
+```
 
 
 

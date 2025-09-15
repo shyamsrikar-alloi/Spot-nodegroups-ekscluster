@@ -220,3 +220,47 @@ helm upgrade --install node-termination-handler eks/aws-node-termination-handler
   --set serviceAccount.create=false
 ```
 <img width="1859" height="504" alt="image" src="https://github.com/user-attachments/assets/ec7cba08-b3c2-4bdd-9d7e-a0253e83e04c" />
+
+
+
+
+
+
+# Karpenter
+- KarpenterControllerPolicy
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:RunInstances",
+                "ec2:DescribeInstances",
+                "ec2:DescribeLaunchTemplates",
+                "ec2:CreateTags",
+                "ec2:DeleteTags",
+                "ec2:TerminateInstances",
+                "iam:PassRole",
+                "ec2:DescribeSubnets",
+                "ec2:DescribeSecurityGroups",
+                "ec2:DescribeInstanceTypes",
+                "ec2:DescribeAvailabilityZones"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
+## Attach it
+```
+eksctl create iamserviceaccount \
+  --cluster opshealth-dev-eks \
+  --namespace node-termination-handler \
+  --name karpenter \
+  --attach-policy-arn arn:aws:iam::533267292058:policy/KarpenterControllerPolicy \
+  --attach-policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly \
+  --attach-policy-arn arn:aws:iam::aws:policy/AmazonEC2FullAccess \
+  --approve
+```
+<img width="1857" height="498" alt="image" src="https://github.com/user-attachments/assets/c3bff3ac-101d-408f-9ef8-2650ec412867" />

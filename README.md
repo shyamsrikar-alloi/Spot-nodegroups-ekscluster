@@ -319,3 +319,11 @@ spec:
       karpenter.sh/discovery: "opshealth-dev-eks"
   ttlSecondsAfterEmpty: 300  # terminate unused nodes after 2 minutes
 ```
+
+
+
+
+
+# 📚 References and Documentation
+
+https://karpenter.sh/docs/getting-started/migrating-from-cas/

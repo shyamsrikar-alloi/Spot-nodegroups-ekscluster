@@ -289,29 +289,33 @@ helm upgrade --install karpenter karpenter/karpenter \
 ```
 nano provisioner.yaml
 ```
+- tag te subnets and provisioners
+
+<img width="1851" height="441" alt="image" src="https://github.com/user-attachments/assets/d620ad1e-39c6-4b92-802e-5c772f02742b" />
+
 ```
 apiVersion: karpenter.sh/v1alpha5
 kind: Provisioner
 metadata:
   name: spot-provisioner
 spec:
-  # Limit to Spot instances
   requirements:
     - key: "kubernetes.io/arch"
       operator: In
       values: ["amd64"]
-    - key: "kubernetes.io/instance-type"
+    - key: "karpenter.k8s.aws/instance-family"
       operator: In
-      values: ["t3.medium"]
+      values: ["t3"]
+    - key: "karpenter.k8s.aws/instance-size"
+      operator: In
+      values: ["medium"]
     - key: "karpenter.sh/capacity-type"
       operator: In
       values: ["spot"]
-  # Where to launch instances (optional)
   provider:
-    subnetIDs:
-      - subnet-0e99880d9a05bdf17
-      - subnet-048abb54f2205da64
-    securityGroupIDs:
-      - sg-01536e3df2189d6e3
-  ttlSecondsAfterEmpty: 300   # Terminate unused nodes after 30 seconds
+    subnetSelector:
+      karpenter.sh/discovery: "opshealth-dev-eks"
+    securityGroupSelector:
+      karpenter.sh/discovery: "opshealth-dev-eks"
+  ttlSecondsAfterEmpty: 300  # terminate unused nodes after 2 minutes
 ```

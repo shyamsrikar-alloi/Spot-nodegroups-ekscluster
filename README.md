@@ -230,40 +230,37 @@ helm upgrade --install node-termination-handler eks/aws-node-termination-handler
 - KarpenterControllerPolicy
 ```
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:RunInstances",
-                "ec2:DescribeInstances",
-                "ec2:DescribeLaunchTemplates",
-                "ec2:CreateTags",
-                "ec2:DeleteTags",
-                "ec2:TerminateInstances",
-                "iam:PassRole",
-                "ec2:DescribeSubnets",
-                "ec2:DescribeSecurityGroups",
-                "ec2:DescribeInstanceTypes",
-                "ec2:DescribeAvailabilityZones"
-            ],
-            "Resource": "*"
-        }
-    ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:RunInstances",
+        "ec2:CreateFleet",
+        "ec2:Describe*",
+        "ec2:TerminateInstances",
+        "ec2:CreateTags",
+        "ec2:DeleteTags",
+        "pricing:GetProducts",
+        "ssm:GetParameter",
+        "iam:PassRole"
+      ],
+      "Resource": "*"
+    }
+  ]
 }
+
 ```
 ## Attach it
 ```
 eksctl create iamserviceaccount \
   --cluster opshealth-dev-eks \
-  --namespace node-termination-handler \
+  --namespace karpenter \
   --name karpenter \
   --attach-policy-arn arn:aws:iam::533267292058:policy/KarpenterControllerPolicy \
-  --attach-policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly \
-  --attach-policy-arn arn:aws:iam::aws:policy/AmazonEC2FullAccess \
   --approve
 ```
-<img width="1857" height="498" alt="image" src="https://github.com/user-attachments/assets/c3bff3ac-101d-408f-9ef8-2650ec412867" />
+<img width="1848" height="452" alt="image" src="https://github.com/user-attachments/assets/bbf4ce26-ebaa-487c-ac3a-8e133ccea973" />
 
 ## created a role and instance profile and attached to karpenter while installing
 <img width="1551" height="709" alt="image" src="https://github.com/user-attachments/assets/ed58d70a-dda5-4d39-82a8-c071974a2b40" />

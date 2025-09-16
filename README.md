@@ -273,7 +273,7 @@ helm repo update
 ```
 ```
 helm upgrade --install karpenter karpenter/karpenter \
-  --namespace node-termination-handler \
+  --namespace karpenter \
   --set serviceAccount.create=false \
   --set serviceAccount.name=karpenter \
   --set clusterName=opshealth-dev-eks \

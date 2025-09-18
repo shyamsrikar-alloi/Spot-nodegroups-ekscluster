@@ -418,3 +418,5 @@ https://karpenter.sh/docs/getting-started/migrating-from-cas/
 <img width="1858" height="961" alt="Pasted image" src="https://github.com/user-attachments/assets/e45d05f9-8fdd-47c7-9e9d-1e4ac245cdd3" />
 
 <img width="720" height="371" alt="Pasted image (2)" src="https://github.com/user-attachments/assets/b658eeca-0c11-408c-82cf-4af9511c4187" />
+
+<img width="1612" height="388" alt="image" src="https://github.com/user-attachments/assets/c329c239-cb5f-4249-b740-4e75dc8db09c" />

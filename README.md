@@ -353,9 +353,68 @@ spec:
 kubectl apply -f provisioner.yaml
 ```
 
+- then deployed a sample deloyment to test the scaling
 
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-spot
+  labels:
+    app: nginx
+spec:
+  replicas: 40
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      nodeSelector:
+        spot: "true"
+        workload: "non-critical"
+      tolerations:
+        - key: "spot"
+          operator: "Equal"
+          value: "true"
+          effect: "NoSchedule"
+      containers:
+        - name: nginx
+          image: nginx:stable
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20
+```
 
 
 # 📚 References and Documentation
 
 https://karpenter.sh/docs/getting-started/migrating-from-cas/
+
+
+
+
+# Errors
+<img width="1858" height="961" alt="Pasted image" src="https://github.com/user-attachments/assets/e45d05f9-8fdd-47c7-9e9d-1e4ac245cdd3" />
+
+<img width="720" height="371" alt="Pasted image (2)" src="https://github.com/user-attachments/assets/b658eeca-0c11-408c-82cf-4af9511c4187" />

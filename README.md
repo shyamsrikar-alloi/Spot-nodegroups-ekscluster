@@ -302,6 +302,9 @@ spec:
     karpenter.sh/discovery: opshealth-dev-eks
   securityGroupSelector:
     karpenter.sh/discovery: opshealth-dev-eks
+  amiSelector:
+    karpenter.sh/discovery: opshealth-dev-eks
+
 ```
 
 ```
@@ -342,8 +345,7 @@ spec:
     - key: spot
       value: "true"
       effect: NoSchedule
-  ttlSecondsAfterEmpty: 300
-
+  ttlSecondsAfterEmpty: 30
 
 
 ```

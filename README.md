@@ -183,8 +183,7 @@ aws events put-targets --rule spot-rebalance \
         "autoscaling:UpdateAutoScalingGroup",
         "autoscaling:DescribeAutoScalingInstances",
         "ec2:DescribeInstances",
-        "ec2:DescribeTags",
-        "ec2:TerminateInstances"
+        "ec2:DescribeTags"
       ],
       "Resource": "*"
     }

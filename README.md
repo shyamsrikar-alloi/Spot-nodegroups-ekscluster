@@ -306,3 +306,6 @@ kubectl apply -f nodepool.yaml
 
 <img width="1857" height="943" alt="image" src="https://github.com/user-attachments/assets/74eab831-41d1-4145-aa1b-85a04c35f801" />
 
+<img width="1849" height="983" alt="image" src="https://github.com/user-attachments/assets/e70d197a-4379-4613-893a-a0fca91af7cd" />
+
+<img width="1855" height="980" alt="image" src="https://github.com/user-attachments/assets/3ff2eec7-1457-463b-b83e-6484db2741f2" />

@@ -226,196 +226,76 @@ helm upgrade --install node-termination-handler eks/aws-node-termination-handler
 
 
 # Karpenter
-- KarpenterControllerPolicy
-```
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "ec2:RunInstances",
-        "ec2:CreateFleet",
-        "ec2:Describe*",
-        "ec2:TerminateInstances",
-        "ec2:CreateTags",
-        "ec2:DeleteTags",
-        "pricing:GetProducts",
-        "ssm:GetParameter",
-        "iam:PassRole"
-      ],
-      "Resource": "*"
-    }
-  ]
-}
+
+Folllowed this official document to install the version-1.7
+-Link https://karpenter.sh/docs/getting-started/migrating-from-cas/
+
+## Create default NodePool
+- for provisioning spot nodes
 
 ```
-## Attach it
-```
-eksctl create iamserviceaccount \
-  --cluster opshealth-dev-eks \
-  --namespace karpenter \
-  --name karpenter \
-  --attach-policy-arn arn:aws:iam::533267292058:policy/KarpenterControllerPolicy \
-  --approve
-```
-<img width="1848" height="452" alt="image" src="https://github.com/user-attachments/assets/bbf4ce26-ebaa-487c-ac3a-8e133ccea973" />
-
-## created a role and instance profile and attached to karpenter while installing
-<img width="1551" height="709" alt="image" src="https://github.com/user-attachments/assets/ed58d70a-dda5-4d39-82a8-c071974a2b40" />
-
-```
-helm repo add karpenter https://charts.karpenter.sh
-```
-```
-helm repo update
-```
-```
-helm upgrade --install karpenter karpenter/karpenter \
-  --namespace karpenter \
-  --set serviceAccount.create=false \
-  --set serviceAccount.name=karpenter \
-  --set clusterName=opshealth-dev-eks \
-  --set clusterEndpoint=$(aws eks describe-cluster --name opshealth-dev-eks --query "cluster.endpoint" --output text) \
-  --set aws.defaultInstanceProfile=KarpenterNodeInstanceProfile-opshealth-dev-eks  
-```
-
-<img width="1753" height="308" alt="image" src="https://github.com/user-attachments/assets/162e0457-7519-4dd4-9d22-69e124a8e2c5" />
-
-
-- tag the subnets and security groups
-
-<img width="1851" height="441" alt="image" src="https://github.com/user-attachments/assets/d620ad1e-39c6-4b92-802e-5c772f02742b" />
-
-```
- nano aws-node-template.yaml
-```
-
-```
-apiVersion: karpenter.k8s.aws/v1alpha1
-kind: AWSNodeTemplate
+apiVersion: karpenter.sh/v1
+kind: NodePool
 metadata:
-  name: spot-template
+  name: default
 spec:
-  subnetSelector:
-    karpenter.sh/discovery: opshealth-dev-eks
-  securityGroupSelector:
-    karpenter.sh/discovery: opshealth-dev-eks
-  amiSelector:
-    karpenter.sh/discovery: opshealth-dev-eks
-
-```
-
-```
-kubectl apply -f aws-node-template.yaml
-```
-
-```
-nano provisioner.yaml
-```
-```
-apiVersion: karpenter.sh/v1alpha5
-kind: Provisioner
-metadata:
-  name: spot-provisioner
-spec:
-  providerRef:
-    name: spot-template          # must match AWSNodeTemplate name
-  requirements:
-    - key: kubernetes.io/arch
-      operator: In
-      values: ["amd64"]
-    - key: karpenter.k8s.aws/instance-family
-      operator: In
-      values: ["t3"]
-    - key: karpenter.k8s.aws/instance-size
-      operator: In
-      values: ["medium"]
-    - key: karpenter.sh/capacity-type
-      operator: In
-      values: ["spot"]
-    - key: spot
-      operator: In
-      values: ["true"]
-    - key: workload
-      operator: In
-      values: ["non-critical"]
-  taints:
-    - key: spot
-      value: "true"
-      effect: NoSchedule
-  ttlSecondsAfterEmpty: 30
-
-
-```
-```
-kubectl apply -f provisioner.yaml
-```
-
-- then deployed a sample deloyment to test the scaling
-
-```
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-spot
-  labels:
-    app: nginx
-spec:
-  replicas: 40
-  selector:
-    matchLabels:
-      app: nginx
   template:
     metadata:
-      labels:
-        app: nginx
     spec:
-      nodeSelector:
-        spot: "true"
-        workload: "non-critical"
-      tolerations:
-        - key: "spot"
-          operator: "Equal"
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot"]
+        - key: node.kubernetes.io/instance-type
+          operator: In
+          values: ["t3.medium"]
+        - key: spot
+          operator: In
+          values: ["true"]
+        - key: workload
+          operator: In
+          values: ["non-critical"]
+      taints:
+        - key: spot
           value: "true"
-          effect: "NoSchedule"
-      containers:
-        - name: nginx
-          image: nginx:stable
-          ports:
-            - containerPort: 80
-          resources:
-            requests:
-              cpu: "100m"
-              memory: "128Mi"
-            limits:
-              cpu: "250m"
-              memory: "256Mi"
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 80
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 80
-            initialDelaySeconds: 15
-            periodSeconds: 20
+          effect: NoSchedule
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: default
+      expireAfter: 720h # 30 days
+  limits:
+    cpu: 1000
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 1m
+---
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: default
+spec:
+  role: "KarpenterNodeRole-opshealth-dev-eks"
+  amiFamily: AL2023
+  amiSelectorTerms:
+    - id: "ami-0c5e7e8af3493a528"
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "opshealth-dev-eks"
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "opshealth-dev-eks"
 ```
+- Apply the file
 
+```
+kubectl apply -f nodepool.yaml
+```
+<img width="1855" height="119" alt="image" src="https://github.com/user-attachments/assets/075360aa-d3dc-47a8-8681-bd33b0a51973" />
 
-# 📚 References and Documentation
-
-https://karpenter.sh/docs/getting-started/migrating-from-cas/
-
-
-
-
-# Errors
-<img width="1858" height="961" alt="Pasted image" src="https://github.com/user-attachments/assets/e45d05f9-8fdd-47c7-9e9d-1e4ac245cdd3" />
-
-<img width="720" height="371" alt="Pasted image (2)" src="https://github.com/user-attachments/assets/b658eeca-0c11-408c-82cf-4af9511c4187" />
-
-<img width="1612" height="388" alt="image" src="https://github.com/user-attachments/assets/c329c239-cb5f-4249-b740-4e75dc8db09c" />

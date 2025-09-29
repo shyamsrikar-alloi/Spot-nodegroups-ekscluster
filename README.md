@@ -310,3 +310,9 @@ kubectl apply -f nodepool.yaml
 
 <img width="1855" height="980" alt="image" src="https://github.com/user-attachments/assets/3ff2eec7-1457-463b-b83e-6484db2741f2" />
 <img width="1850" height="1004" alt="image" src="https://github.com/user-attachments/assets/ace6679e-dcac-462c-9288-722606147bd4" />
+
+
+## Terminating
+- if there is no pods to schedule on provisioned node karpenter will terminate the nodes before 5 min
+
+<img width="1857" height="954" alt="image" src="https://github.com/user-attachments/assets/6377fd3c-7362-45ed-9775-7be8d33a85c9" />

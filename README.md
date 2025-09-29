@@ -299,3 +299,10 @@ kubectl apply -f nodepool.yaml
 ```
 <img width="1855" height="119" alt="image" src="https://github.com/user-attachments/assets/075360aa-d3dc-47a8-8681-bd33b0a51973" />
 
+
+## Verified
+
+<img width="1488" height="807" alt="image" src="https://github.com/user-attachments/assets/da655902-1b57-4ae2-8306-1402253728c4" />
+
+<img width="1857" height="943" alt="image" src="https://github.com/user-attachments/assets/74eab831-41d1-4145-aa1b-85a04c35f801" />
+
